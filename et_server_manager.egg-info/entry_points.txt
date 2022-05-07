@@ -1,0 +1,3 @@
+[console_scripts]
+etsm = etsm.cli.__main__:cli
+

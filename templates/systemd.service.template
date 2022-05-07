@@ -1,0 +1,13 @@
+[Unit]
+Description=$server_name - etsm Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/etsm/servers/$server_name
+Restart=always
+RestartSec=5
+ExecStart=$startup_command
+
+[Install]
+WantedBy=multi-user.target

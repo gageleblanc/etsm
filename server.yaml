@@ -1,0 +1,36 @@
+server_name: "testserver"
+mod: 
+  name: legacy
+maps:
+  - adlernest
+  - caen_4
+  - bremen_final
+  - baserace
+  - beach
+  - alleys
+configs:
+  - name: "test_server"
+    from: "etl_server"
+    cvars:
+      sv_hostname: "testserver etsm"
+      sv_maxclients: "32"
+      rconpassword: "test"
+  - name: "test_mod"
+    from: "legacy"
+    cvars:
+      vote_allow_config: "0"
+      vote_allow_gametype: "0"
+      vote_allow_kick: "0"
+      vote_allow_maprestart: "0"
+      vote_allow_matchreset: "0"
+      vote_allow_shuffleteams_norestart: "0"
+      vote_allow_swapteams: "0"
+      vote_allow_antilag: "0"
+      vote_allow_mutespecs: "0"
+      vote_allow_muting: "0"
+      vote_allow_nextcampaign: "0"
+      vote_allow_surrender: "0"
+      vote_allow_restartcampaign: "0"
+startup_configs:
+  - test_server
+  - test_mod
