@@ -15,10 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: shallwefootball/s3-upload-action@master
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws_key_id: ${{ secrets.AWS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_KEY}}
-          aws_bucket: etsm.symnet.io
-          source_dir: 'index.yaml'
-          destination_dir: ''
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1 # Use your bucket region here
+      - name: Upload index file
+        run: aws s3 cp index.yaml s3://etsm.symnet.io/index.yaml

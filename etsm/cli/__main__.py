@@ -123,7 +123,7 @@ class ETSMCLI:
                     config = YAMLConfigurationFile(config_path)
                     if config["sources_url"]:
                         sources_url = config["sources_url"]
-            sources = SourcesManager(debug=self.debug, sources_url=config["sources_url"])
+            sources = SourcesManager(debug=self.debug, sources_url=sources_url)
             sources.download_sources(all_versions=True)
             if config is not None:
                 if config["server_name"]:
