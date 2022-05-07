@@ -1,0 +1,24 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Upload index file
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: shallwefootball/s3-upload-action@master
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_KEY}}
+          aws_bucket: etsm.symnet.io
+          source_dir: 'index.yaml'
+          destination_dir: ''
