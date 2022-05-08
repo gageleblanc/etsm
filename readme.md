@@ -71,8 +71,16 @@ You may also list available mods to install with the `list` subcommand, and inst
 $ etsm server mod install <mod name>
 ```
 
+## Systemd
+ETSM is able to automatically generate Systemd service files, and link them into place for you with the following command: 
+```
+$ etsm server link-service
+```
+This will build a service file for the current server, and link it into place. This will also reload systemd. This command does not start your server for you
+
 ### Notes
 * ETSM tries to save space on your hard disk by using symbolic links to link needed files into servers rather than copying them. This is also how configs are activated and de-activated
 * ETSM will by default manage a server called 'default'. You can change this with the `--server-name` argument on most subcommands. You can also configure a default server with the `etsm config` command.
 * ETSM does not require the remote sources to be available, you can manually build the sources tree on your system or add additional maps/mods to the proper directories easily.
   * There is no configuration or database to update when doing this, ETSM determines what is available with the filesystem.
+* The 'server name' that ETSM uses is *not* the same as the sv_hostname cvar that you use in the server config.
