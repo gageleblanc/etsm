@@ -1,17 +1,22 @@
-server_name: "testserver"
-mod: 
-  name: legacy
-maps:
+# Sample server configuration file
+# This will create a server managed by ETSM with the following configuration
+# You can test this configuration by running the following command: 
+# $ etsm server create -f server.yaml
+server_name: "testserver" # Name of the server, required
+mod: # Mod configuration for server, not required
+  name: legacy # Name of mod, required
+  version: 2.80.1 # Version of mod, not required
+maps: # List of maps to download and enable in the server
   - adlernest
   - caen_4
   - bremen_final
   - baserace
   - beach
   - alleys
-configs:
-  - name: "test_server"
-    from: "etl_server"
-    cvars:
+configs: # List of configs to create and activate on the server.
+  - name: "test_server" # Name of the config, required
+    from: "etl_server" # Name of the template config to copy from, not required
+    cvars: # List of CVARS to set in the config, required
       sv_hostname: "testserver etsm"
       sv_maxclients: "32"
       rconpassword: "test"
@@ -31,6 +36,6 @@ configs:
       vote_allow_nextcampaign: "0"
       vote_allow_surrender: "0"
       vote_allow_restartcampaign: "0"
-startup_configs:
+startup_configs: # List of startup configs to enable, not required
   - test_server
   - test_mod
