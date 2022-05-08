@@ -37,6 +37,45 @@ class ETSMCLI:
             sources_manager = SourcesManager(debug=self.debug, sources_url=self.sources_url)
             sources_manager.download_sources(all_versions=all_versions)
 
+        class Maps:
+            """
+            :alias map:
+            Remote map index
+            """
+            def __init__(self, debug: bool = False, sources_url: str = None):
+                """
+                :param debug: Enable debug mode
+                :param sources_url: URL for sources
+                """
+                self.debug = debug
+                self.sources_url = sources_url
+                
+            def list(self):
+                """
+                List maps
+                """
+                sources_manager = SourcesManager(debug=self.debug, sources_url=self.sources_url)
+                if sources_manager.index is not None:
+                    if "maps" in sources_manager.index["etsm"]:
+                        for map_name in sources_manager.index["etsm"]["maps"]:
+                            print(map_name)
+                    else:
+                        print("No maps found in remote index")
+            
+            def search(self, search_term: str):
+                """
+                Search maps
+                :param search_term: Search term
+                """
+                sources_manager = SourcesManager(debug=self.debug, sources_url=self.sources_url)
+                if sources_manager.index is not None:
+                    if "maps" in sources_manager.index["etsm"]:
+                        for map_name in sources_manager.index["etsm"]["maps"]:
+                            if search_term in map_name:
+                                print(map_name)
+                    else:
+                        print("No maps found in remote index")
+
     class Config:
         """
         Configuration for the CLI
@@ -243,7 +282,7 @@ class ETSMCLI:
 
             def available(self):
                 """
-                List all available maps
+                List all locally available maps
                 """
                 manager = ServerManager(self.server_name, debug=self.debug)
                 res = manager.list_available_maps()
@@ -418,6 +457,16 @@ class ETSMCLI:
                 """
                 manager = ServerManager(self.server_name, debug=self.debug)
                 manager.add_exec(config_name, exec_name)
+
+            def bot(self, config_name: str, botconf_name: str, botconf_value: str):
+                """
+                Add a bot config to a config
+                :param config_name: Config to add the bot to
+                :param botconf_name: Bot config to change
+                :param botconf_value: new value
+                """
+                manager = ServerManager(self.server_name, debug=self.debug)
+                manager.update_bots(config_name, {botconf_name: botconf_value})
 
             def remove_exec(self, config_name: str, exec_name: str):
                 """
