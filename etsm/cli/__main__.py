@@ -30,12 +30,12 @@ class ETSMCLI:
             self.debug = debug
             self.sources_url = sources_url
 
-        def update(self, all_versions: bool = False):
+        def update(self, all_versions: bool = False, download_maps: bool = False):
             """
             Update sources
             """
             sources_manager = SourcesManager(debug=self.debug, sources_url=self.sources_url)
-            sources_manager.download_sources(all_versions=all_versions)
+            sources_manager.download_sources(all_versions=all_versions, download_maps=download_maps)
 
         class Maps:
             """

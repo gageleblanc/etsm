@@ -13,6 +13,8 @@ import tarfile
 import shutil
 import re
 
+import yaml
+
 SERVER_CONFIG_SCHEMA = {
     "server_type": str,
     "server_ip": str,
@@ -113,14 +115,17 @@ class SourcesManager:
         Get the index of sources
         :return: Index of sources
         """
-        self.logger.info("Getting sources index ...")
+        self.logger.debug("Getting sources index ...")
         res = requests.get(self.sources_url + "/index.yaml")
         if res.status_code == 200:
             with tempfile.NamedTemporaryFile() as f:
                 f.write(res.content)
                 f.seek(0)
-                index = YAMLConfigurationFile(f.name, schema={ "etsm": { "config_templates": str }, "servers": {} })
-                self.index = index
+                try
+                    index = YAMLConfigurationFile(f.name, schema={ "etsm": { "config_templates": str }, "servers": {} })
+                    self.index = index
+                except yaml.parser.ParserError:
+                    self.logger.error("Failed to parse remote index file")
         else:
             self.logger.error("Failed to get index of sources: HTTP {}".format(res.status_code))
 
