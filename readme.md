@@ -48,7 +48,7 @@ This will result in ETSM searching the config file for the cvar and updating it 
 
 Similarly, you can add `exec` commands to the configuration file like this:
 ```
-$ etsm server config exec <config name>
+$ etsm server config exec <config name> <exec name>
 ```
 You may also set Omni-bot options via the `bot` subcommand of the `config` command.
 
@@ -70,3 +70,5 @@ $ etsm server mod install <mod name>
 ### Notes
 * ETSM tries to save space on your hard disk by using symbolic links to link needed files into servers rather than copying them. This is also how configs are activated and de-activated
 * ETSM will by default manage a server called 'default'. You can change this with the `--server-name` argument on most subcommands. You can also configure a default server with the `etsm config` command.
+* ETSM does not require the remote sources to be available, you can manually build the sources tree on your system or add additional maps/mods to the proper directories easily.
+  * There is no configuration or database to update when doing this, ETSM determines what is available with the filesystem.
