@@ -121,7 +121,7 @@ class SourcesManager:
             with tempfile.NamedTemporaryFile() as f:
                 f.write(res.content)
                 f.seek(0)
-                try
+                try:
                     index = YAMLConfigurationFile(f.name, schema={ "etsm": { "config_templates": str }, "servers": {} })
                     self.index = index
                 except yaml.parser.ParserError:
