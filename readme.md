@@ -10,6 +10,10 @@ You are able to run ETSM commands on any server with the `--server-name` flag.
 ```
 $ etsm config set default_server <server_name>
 ```
+OR
+```
+$ etsm server --server-name <server_name> ...
+```
 
 ## Sources
 By default, ETSM will download what it needs to start making servers when you run the following:
