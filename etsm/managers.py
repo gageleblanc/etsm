@@ -422,7 +422,10 @@ class ServerManager:
         if real_mapnames:
             maps = self.get_pk3_maps(maps)
         for i, _map in enumerate(maps):
-            config += "set d%d \"set g_gametype 6 ; map %s ; set nextmap vstr d%d\"\n" % (i, _map.lower(), (i + 1))
+            if not len(maps) == i + 1:
+                config += "set d%d \"set g_gametype 6 ; map %s ; set nextmap vstr d%d\"\n" % (i, _map.lower(), (i + 1))
+            else:
+                config += "set d%d \"set g_gametype 6 ; map %s ; set nextmap vstr d0\"\n" % (i, _map.lower())
         config += "vstr d0\n"
         # need to write config too
         config_path = self.get_config_path("mapvotecycle")

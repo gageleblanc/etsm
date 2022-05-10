@@ -135,7 +135,10 @@ class ETSMCLI:
             Run Enemy Territory server
             """
             manager = ServerManager(self.server_name, debug=self.debug)
-            manager.run_server()
+            try:
+                manager.run_server()
+            except Exception as e:
+                self.logger.error(e)
 
         def list(self):
             """
