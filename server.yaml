@@ -3,6 +3,8 @@
 # You can test this configuration by running the following command: 
 # $ etsm server create -f server.yaml
 server_name: "testserver" # Name of the server, required
+server_ip: "0.0.0.0" # IP address for the server to listen on, not required
+server_port: "27960" # Port for the server to listen on, not required
 mod: # Mod configuration for server, not required
   name: legacy # Name of mod, required
   version: 2.80.1 # Version of mod, not required
@@ -36,6 +38,12 @@ configs: # List of configs to create and activate on the server.
       vote_allow_nextcampaign: "0"
       vote_allow_surrender: "0"
       vote_allow_restartcampaign: "0"
+  - name: "test_bots"
+    bot: # Omni-bot configuration, not required
+      maxbots: 10
+build_mapvote: true # Whether to build a mapvotecycle config for the server (based on above maps list), not required
 startup_configs: # List of startup configs to enable, not required
   - test_server
   - test_mod
+  - test_bots
+  - mapvotecycle
