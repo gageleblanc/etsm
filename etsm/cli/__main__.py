@@ -1,8 +1,10 @@
 from pathlib import Path
+import shutil
 from etsm.managers import ServerManager, SourcesManager
 from clilib.builders.app import EasyCLI
 from clilib.util.logging import Logging
 from clilib.config.config_loader import JSONConfigurationFile, YAMLConfigurationFile
+from clilib.util.util import Util
 import os
 
 
@@ -152,6 +154,15 @@ class ETSMCLI:
             :param from_config: ETSM Server Builder configuration to use (default: None)
             :param force: Force creation (delete and recreate, default: False)
             """
+            def _undo_create(server_name):
+                """
+                Undo server creation
+                """
+                print("undoing ...")
+                server_path = Path("/var/lib/etsm/servers/{}".format(server_name))
+                if server_path.exists():
+                    shutil.rmtree(server_path)
+                
             config = None
             sources_url = None
             if from_config is not None:
@@ -176,9 +187,14 @@ class ETSMCLI:
                     return
             self.update(version, force=force)
             if config is not None:
+                if config["server_ip"]:
+                    manager.set_ip(config["server_ip"])
+                if config["server_port"]:
+                    manager.set_port(config["server_port"])
                 if config["mod"]:
-                    if not config["mod"]["name"]:
+                    if "name" not in config["mod"]:
                         print("Invalid configuration: mod.name is not set.")
+                        _undo_create(self.server_name)
                         return
                     if "version" not in config["mod"]:
                         config["mod"]["version"] = None
@@ -187,21 +203,46 @@ class ETSMCLI:
                     for i, config_def in enumerate(config["configs"]):
                         if not config_def["name"]:
                             print("Invalid configuration: configs.[%d].name is not set." % i)
+                            _undo_create(self.server_name)
                             return
-                        if not config_def["from"]:
+                        if "from" not in config_def:
                             config_def["from"] = None
-                        if not config_def["cvars"]:
+                        if "cvars" not in config_def:
                             config_def["cvars"] = {}
                         manager.create_config(config_name=config_def["name"], from_template=config_def["from"], cvars=config_def["cvars"], activate=True)
+                        if "bot" in config_def:
+                            if not isinstance(config_def["bot"], dict):
+                                print("Invalid configuration: configs.[%d].bot is not a dictionary." % i)
+                                _undo_create(self.server_name)
+                                return
+                            manager.update_bots(config_name=config_def["name"], new_values=config_def["bot"])
                 if config["maps"]:
                     if not config["sources_url"]:
                         config["sources_url"] = None
                     sources.download_maps(config["maps"])
                     for _map in config["maps"]:
                         manager.add_map(_map)
+                if config["build_mapvote"]:
+                    manager.build_mapvote_cycle(real_mapnames=True)
                 if config["startup_configs"]:
-                    manager.config["startup_configs"] = config["startup_configs"]
-                    manager.config.write()
+                    for startup_config_name in config["startup_configs"]:
+                        manager.add_startup_config(startup_config_name)
+
+        def delete(self, yes: bool = False):
+            """
+            Delete a server
+            :param yes: Don't ask before deletion (default: False)
+            """
+            if not yes:
+                if not Util.do_confirm("Are you sure you want to delete server {}?".format(self.server_name)):
+                    return
+            
+            server_path = Path("/var/lib/etsm/servers/{}".format(self.server_name))
+            if server_path.exists():
+                shutil.rmtree(server_path)
+                print("Server deleted.")
+            else:
+                print("Server does not exist.")
 
         def update(self, version: str = None, force: bool = False):
             """
@@ -479,6 +520,15 @@ class ETSMCLI:
                 """
                 manager = ServerManager(self.server_name, debug=self.debug)
                 manager.remove_exec(config_name, exec_name)
+
+            def build_mapvote_cycle(self, real_mapnames: bool = False):
+                """
+                Build mapvote cycle out of currently enabled maps
+                :param real_mapnames: Use real mapnames. When true, this reads the map filename from the pk3 file itself rather than guessing based on the pk3 filename. (default: False)
+                :alias mapvote:
+                """
+                manager = ServerManager(self.server_name, debug=self.debug)
+                manager.build_mapvote_cycle(real_mapnames=real_mapnames)
 
             def set_ip(self, ip: str):
                 """
