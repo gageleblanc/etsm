@@ -183,7 +183,7 @@ class SourcesManager:
             self.logger.info("Downloading map %s" % _map)
             destination_map_path = destination_path / _map
             if not destination_map_path.exists():
-                self.download_file_progress(self.sources_url + "/maps/" + _map, destination_map_path)
+                self.download_file_progress(self.sources_url + "/etmain/" + _map, destination_map_path)
             else:
                 self.logger.info("Map %s already downloaded" % _map)
 
