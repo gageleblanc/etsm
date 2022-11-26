@@ -142,7 +142,26 @@ class SourcesManager:
             etmain_dir.mkdir()
         self.logger.info("Extracting etmain paks...")
         with tarfile.open(destination_path / "paks.tgz", "r:gz") as tar:
-            tar.extractall(etmain_dir)
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner=numeric_owner) 
+                
+            
+            safe_extract(tar, etmain_dir)
 
     def download_server_sources(self, all_versions: bool = False):
         self.logger.info("Downloading server sources...")
@@ -224,7 +243,26 @@ class SourcesManager:
                 if self.download_file_progress(self.sources_url + self.index["etsm"]["config_templates"], f.name):
                     self.logger.info("Extracting config templates...")
                     with tarfile.open(f.name, "r") as tar:
-                        tar.extractall(destination_path)
+                        def is_within_directory(directory, target):
+                            
+                            abs_directory = os.path.abspath(directory)
+                            abs_target = os.path.abspath(target)
+                        
+                            prefix = os.path.commonprefix([abs_directory, abs_target])
+                            
+                            return prefix == abs_directory
+                        
+                        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+                        
+                            for member in tar.getmembers():
+                                member_path = os.path.join(path, member.name)
+                                if not is_within_directory(path, member_path):
+                                    raise Exception("Attempted Path Traversal in Tar File")
+                        
+                            tar.extractall(path, members, numeric_owner=numeric_owner) 
+                            
+                        
+                        safe_extract(tar, destination_path)
                     checksum_path = destination_path / "checksums.md5"
                     if checksum_path.exists():
                         checksum_path.unlink()
@@ -348,7 +386,26 @@ class ServerManager:
             tarname = "{}-{}.tgz".format(self.config["server_type"], source_version)
             with tempfile.TemporaryDirectory() as tmpdirname:
                 with tarfile.open(self.source_path / "servers" / tarname) as tar:
-                    tar.extractall(tmpdirname)
+                    def is_within_directory(directory, target):
+                        
+                        abs_directory = os.path.abspath(directory)
+                        abs_target = os.path.abspath(target)
+                    
+                        prefix = os.path.commonprefix([abs_directory, abs_target])
+                        
+                        return prefix == abs_directory
+                    
+                    def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+                    
+                        for member in tar.getmembers():
+                            member_path = os.path.join(path, member.name)
+                            if not is_within_directory(path, member_path):
+                                raise Exception("Attempted Path Traversal in Tar File")
+                    
+                        tar.extractall(path, members, numeric_owner=numeric_owner) 
+                        
+                    
+                    safe_extract(tar, tmpdirname)
                 self.logger.debug("Extracted {} to {}".format(tarname, tmpdirname))
                 etl_dirname = "etlegacy-v{}-i386".format(source_version)
                 etl_path = Path(tmpdirname) / etl_dirname
@@ -739,7 +796,26 @@ class ServerManager:
                     self.logger.warn("Mod {} already exists at version {}, not installing. Pass force argument to force installation.".format(mod_name, mod_version))
                     return
         with tarfile.open(mod_path, "r:gz") as f:
-            f.extractall(self.server_path)
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner=numeric_owner) 
+                
+            
+            safe_extract(f, self.server_path)
         with open(mod_dest_path / ".mod_version", "w") as f:
             f.write(mod_version)
         self.logger.info("Mod {} version {} installed.".format(mod_name, mod_version))
